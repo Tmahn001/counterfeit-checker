@@ -103,9 +103,11 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 DATA_UPLOAD_MAX_NUMBER_FILES = 500
 
 # --- CORS / CSRF: locked to known frontend origins (plan §13). Never CORS_ALLOW_ALL_ORIGINS. ---
-CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
+# Origins are compared exactly against the browser's Origin header, which never has a trailing
+# slash — strip one if an operator pasted a URL with it.
+CORS_ALLOWED_ORIGINS = [o.strip().rstrip("/") for o in env("CORS_ALLOWED_ORIGINS") if o.strip()]
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = [o.strip().rstrip("/") for o in env("CSRF_TRUSTED_ORIGINS") if o.strip()]
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 PUBLIC_WEB_ORIGIN = env("PUBLIC_WEB_ORIGIN")
