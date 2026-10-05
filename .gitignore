@@ -56,3 +56,6 @@ infra/nginx/certs/
 
 # Thesis documents (not part of the codebase)
 fyp-docs/
+
+# Vercel CLI link/build output
+.vercel/
