@@ -7,16 +7,16 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://authentic-edge-api.onrender.com/api/:path*"
+      "source": "/api/(.*)",
+      "destination": "https://authentic-edge-api.onrender.com/api/$1"
     },
     {
-      "source": "/django-admin/:path*",
-      "destination": "https://authentic-edge-api.onrender.com/django-admin/:path*"
+      "source": "/django-admin/(.*)",
+      "destination": "https://authentic-edge-api.onrender.com/django-admin/$1"
     },
     {
-      "source": "/django-static/:path*",
-      "destination": "https://authentic-edge-api.onrender.com/django-static/:path*"
+      "source": "/django-static/(.*)",
+      "destination": "https://authentic-edge-api.onrender.com/django-static/$1"
     }
   ],
   "headers": [
