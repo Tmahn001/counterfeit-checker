@@ -27,6 +27,21 @@ function getCookie(name: string): string | null {
   return m?.[1] ? decodeURIComponent(m[1]) : null;
 }
 
+/** Turn a DRF error body into one readable sentence: {detail}, {non_field_errors: [..]} or {field: [..]}. */
+function errorMessage(body: unknown): string {
+  if (typeof body !== 'object' || body === null) return '';
+  const rec = body as Record<string, unknown>;
+  if (typeof rec.detail === 'string') return rec.detail;
+  const first = (v: unknown) =>
+    Array.isArray(v) ? String(v[0] ?? '') : typeof v === 'string' ? v : '';
+  if (rec.non_field_errors) return first(rec.non_field_errors);
+  for (const [field, v] of Object.entries(rec)) {
+    const msg = first(v);
+    if (msg) return `${field}: ${msg}`;
+  }
+  return '';
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   const csrf = getCookie('csrftoken');
@@ -36,10 +51,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${env.apiBaseUrl}${path}`, { ...init, headers, credentials: 'include' });
   if (res.status === 204) return undefined as T;
   const body: unknown = await res.json().catch(() => null);
-  if (!res.ok) {
-    const detail = (body as { detail?: string } | null)?.detail ?? JSON.stringify(body);
-    throw new ApiError(res.status, detail || res.statusText);
-  }
+  if (!res.ok) throw new ApiError(res.status, errorMessage(body) || res.statusText);
   return body as T;
 }
 
