@@ -1,6 +1,10 @@
 /**
  * Engine worker: owns OpenCV.js, the TF.js model and the authentication pipeline so the UI thread
  * never parses the 10 MB vision bundle or runs inference (plan §14: TTI < 3 s on mid-tier devices).
+ *
+ * Hosting note: this script's own response headers set the worker's Content-Security-Policy. The
+ * WebAssembly backend (Safari's path) needs 'unsafe-eval' there, so chunk scripts get a relaxed
+ * policy while the page keeps the strict one (apps/web/vercel.json, infra/nginx/prod.conf).
  */
 import { currentBackend } from '../inference/backend';
 import { PipelineError, prepareEngine, runPipeline, type Engine } from './pipeline';
