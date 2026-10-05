@@ -10,7 +10,7 @@ services:
     dockerfilePath: ./apps/api/Dockerfile.render
     dockerContext: .
     healthCheckPath: /api/v1/health/
-    preDeployCommand: python manage.py migrate --noinput && python manage.py bootstrap
+    preDeployCommand: /app/bin/pre-deploy.sh
     autoDeploy: true
     buildFilter:
       paths:

@@ -24,6 +24,6 @@ COPY apps/api/ /app/
 RUN DJANGO_SETTINGS_MODULE=config.settings.prod DJANGO_SECRET_KEY=build-only \
     DATABASE_URL=sqlite:////tmp/build.db REDIS_URL=redis://build-only:6379/0 python manage.py collectstatic --noinput \
   && addgroup --system app && adduser --system --ingroup app app \
-  && mkdir -p /app/media && chown -R app:app /app && chmod +x /app/bin/start-render.sh
+  && mkdir -p /app/media && chown -R app:app /app && chmod +x /app/bin/start-render.sh /app/bin/pre-deploy.sh
 USER app
 CMD ["/app/bin/start-render.sh"]
