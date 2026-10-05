@@ -71,7 +71,7 @@ registerRoute(
       }
       return handler(params);
     },
-    { denylist: [/^\/api\//, /^\/admin\//, /^\/django-static\//, /^\/media\//] },
+    { denylist: [/^\/api\//, /^\/django-admin\//, /^\/django-static\//, /^\/media\//] },
   ),
 );
 
