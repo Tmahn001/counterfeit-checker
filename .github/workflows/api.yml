@@ -1,0 +1,41 @@
+name: api
+on:
+  push:
+    branches: [main]
+    paths: ['apps/api/**', 'ml/**', '.github/workflows/api.yml']
+  pull_request:
+    paths: ['apps/api/**', 'ml/**', '.github/workflows/api.yml']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env: { POSTGRES_DB: test, POSTGRES_USER: test, POSTGRES_PASSWORD: test }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U test" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings.test
+      DJANGO_SECRET_KEY: ci
+      DATABASE_URL: postgres://test:test@localhost:5432/test
+      REDIS_URL: redis://localhost:6379/0
+    defaults: { run: { working-directory: apps/api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11', cache: pip }
+      - run: pip install -r requirements/base.txt -r requirements/dev.txt pip-audit
+      - run: ruff check . && black --check .
+      - run: mypy . || true # informational until stubs are complete
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py migrate --noinput
+      - run: pytest -q --cov --cov-fail-under=85
+      - run: python manage.py spectacular --file schema.yml --validate
+      - name: API contract fuzzing (schemathesis)
+        run: |
+          python manage.py migrate --noinput
+          python manage.py runserver 0.0.0.0:8000 & sleep 4
+          schemathesis run schema.yml --base-url=http://localhost:8000 --checks all --hypothesis-max-examples=20 --endpoint='/api/v1/(telemetry|models|health)' || true
+      - run: pip-audit -r requirements/base.txt || true

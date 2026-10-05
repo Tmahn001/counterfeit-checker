@@ -1,0 +1,29 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "project": "./tsconfig.json", "tsconfigRootDir": "." },
+  "plugins": ["@typescript-eslint"],
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended-type-checked"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/consistent-type-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["lib/inference/**/*.ts", "lib/vision/**/*.ts", "lib/telemetry/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-unsafe-assignment": "error"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "e2e/**"],
+      "rules": {
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/unbound-method": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["out/", ".next/", "public/sw.js", "scripts/*.mjs", "*.config.*"]
+}

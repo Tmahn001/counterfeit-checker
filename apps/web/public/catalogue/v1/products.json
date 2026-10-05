@@ -1,0 +1,68 @@
+{
+  "version": "1",
+  "products": [
+    {
+      "slug": "cway-table-water-75cl",
+      "display_name": "CWAY Table Water 75cl",
+      "manufacturer": "CWAY Food & Beverages Nigeria",
+      "pack": "75 cl PET bottle",
+      "sector": "food_beverage"
+    },
+    {
+      "slug": "gala-sausage-roll",
+      "display_name": "Gala Sausage Roll",
+      "manufacturer": "UAC Foods",
+      "pack": "single roll, film wrap",
+      "sector": "food_beverage"
+    },
+    {
+      "slug": "minimie-chinchin",
+      "display_name": "Minimie Chinchin",
+      "manufacturer": "Dufil Prima Foods",
+      "pack": "45 g sachet",
+      "sector": "food_beverage"
+    },
+    {
+      "slug": "indomie-chicken-70g",
+      "display_name": "Indomie Instant Noodles (Chicken) 70g",
+      "manufacturer": "Dufil Prima Foods",
+      "pack": "70 g pack",
+      "sector": "food_beverage"
+    },
+    {
+      "slug": "peak-evaporated-milk-160g",
+      "display_name": "Peak Evaporated Milk 160g",
+      "manufacturer": "FrieslandCampina WAMCO",
+      "pack": "160 g tin",
+      "sector": "food_beverage"
+    },
+    {
+      "slug": "milo-sachet-20g",
+      "display_name": "Nestlé Milo 20g Sachet",
+      "manufacturer": "Nestlé Nigeria",
+      "pack": "20 g sachet",
+      "sector": "food_beverage"
+    },
+    {
+      "slug": "emzor-paracetamol-500mg",
+      "display_name": "Emzor Paracetamol 500mg",
+      "manufacturer": "Emzor Pharmaceutical Industries",
+      "pack": "blister of 12 tablets",
+      "sector": "pharmaceutical"
+    },
+    {
+      "slug": "synthetic_product_01",
+      "display_name": "Synthetic Product 01 (demo)",
+      "manufacturer": "authentic-edge",
+      "pack": "procedural texture",
+      "sector": "demo"
+    },
+    {
+      "slug": "synthetic_product_02",
+      "display_name": "Synthetic Product 02 (demo)",
+      "manufacturer": "authentic-edge",
+      "pack": "procedural texture",
+      "sector": "demo"
+    }
+  ]
+}

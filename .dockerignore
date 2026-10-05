@@ -1,0 +1,26 @@
+# Build context is the repository root for every image. Keep it small.
+.git
+**/node_modules
+**/.next
+apps/web/out
+apps/web/playwright-report
+apps/web/test-results
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.venv
+.env
+.env.*
+!.env.example
+fyp-docs
+docs/evaluation-plots
+ml/data
+ml/mlruns
+ml/reports
+ml/notebooks
+ml/artifacts/*
+!ml/artifacts/v*
+apps/api/media
+apps/api/staticfiles
+infra/nginx/certs

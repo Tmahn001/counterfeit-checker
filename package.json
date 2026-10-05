@@ -1,0 +1,44 @@
+{
+  "name": "authentic-edge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-based counterfeit product authentication \u2014 client-side PWA (ORB + Siamese CNN) with a thin Django administrative backend.",
+  "author": "Tolulope Iwalewa (KclautHQ)",
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @authentic-edge/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,css,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,css,yml,yaml}\"",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.0",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  },
+  "lint-staged": {
+    "apps/web/{app,components,lib,e2e,test}/**/*.{ts,tsx}": [
+      "prettier --write",
+      "pnpm --filter @authentic-edge/web exec eslint --max-warnings=0"
+    ],
+    "apps/web/sw-src.ts": [
+      "prettier --write",
+      "pnpm --filter @authentic-edge/web exec eslint --max-warnings=0"
+    ],
+    "packages/**/*.ts": [
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css}": [
+      "prettier --write"
+    ]
+  }
+}

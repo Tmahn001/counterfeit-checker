@@ -1,0 +1,58 @@
+# Node
+node_modules/
+.pnpm-store/
+.next/
+out/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+apps/web/public/sw.js
+apps/web/public/sw.js.map
+apps/web/public/workbox-*.js
+apps/web/public/tfjs-wasm/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+dist/
+build/
+*.egg-info/
+
+# ML artifacts (large binaries live in DVC/LFS, not git)
+ml/data/raw/
+ml/data/processed/
+ml/artifacts/*
+!ml/artifacts/v*/
+ml/artifacts/v*/*
+!ml/artifacts/v*/embedding.keras
+ml/mlruns/
+ml/reports/*.png
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+!apps/api/.env.example
+!apps/web/.env.example
+
+# Django
+apps/api/media/
+apps/api/staticfiles/
+apps/api/db.sqlite3
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.log
+infra/nginx/certs/
+
+# Thesis documents (not part of the codebase)
+fyp-docs/

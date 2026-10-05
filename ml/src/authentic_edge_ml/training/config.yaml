@@ -1,0 +1,17 @@
+# Training configuration (plan §8.2). Hyperparameters mirror docs §21.2.
+manifest: data/manifests/v1.json
+processed_dir: data/processed
+artifacts_dir: artifacts
+experiment: authentic-edge-siamese
+
+optimizer: adam
+learning_rate: 0.001
+batch_size: 32
+epochs: 50
+early_stopping_patience: 8
+margin: 1.0
+initial_threshold: 0.5       # m/2; re-tuned on the validation set after training
+target_recall: 0.95
+target_precision: 0.85
+max_pairs_per_class: 4000    # caps pair explosion for large batches
+seed: 1234

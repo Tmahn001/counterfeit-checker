@@ -1,0 +1,41 @@
+import pytest
+from django.contrib.auth import get_user_model
+
+pytestmark = pytest.mark.django_db
+
+
+def test_login_reports_roles_for_each_kind_of_user(
+    api_client, nafdac_user, oem_admin_user, plain_user
+):
+    su = get_user_model().objects.create_superuser(
+        "root@example.com", "root@example.com", "pw12345!x"
+    )
+    cases = [
+        (su.email, {"staff", "nafdac"}),
+        (nafdac_user.email, {"nafdac"}),
+        (oem_admin_user.email, {"oem_admin"}),
+        (plain_user.email, set()),
+    ]
+    for email, roles in cases:
+        res = api_client.post("/api/v1/auth/login/", {"email": email, "password": "pw12345!x"})
+        assert res.status_code == 200, res.content
+        assert set(res.json()["roles"]) == roles
+        assert res.json()["email"] == email
+        assert "csrftoken" in res.cookies
+
+
+def test_bad_credentials_and_anonymous_me(api_client, nafdac_user):
+    assert (
+        api_client.post(
+            "/api/v1/auth/login/", {"email": nafdac_user.email, "password": "x"}
+        ).status_code
+        == 400
+    )
+    assert api_client.get("/api/v1/auth/me/").status_code == 403
+
+
+def test_me_and_logout(api_client, nafdac_user):
+    api_client.force_login(nafdac_user)
+    assert api_client.get("/api/v1/auth/me/").json()["roles"] == ["nafdac"]
+    assert api_client.post("/api/v1/auth/logout/").status_code == 204
+    assert api_client.get("/api/v1/auth/me/").status_code == 403

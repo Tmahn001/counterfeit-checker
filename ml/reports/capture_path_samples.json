@@ -1,0 +1,78 @@
+{
+ "synthetic_product_01": {
+  "authentic": [
+   "synthetic_product_01/authentic/batch_003/item_0030.png",
+   "synthetic_product_01/authentic/batch_003/item_0031.png",
+   "synthetic_product_01/authentic/batch_003/item_0032.png",
+   "synthetic_product_01/authentic/batch_003/item_0033.png",
+   "synthetic_product_01/authentic/batch_003/item_0034.png",
+   "synthetic_product_01/authentic/batch_003/item_0035.png",
+   "synthetic_product_01/authentic/batch_003/item_0036.png",
+   "synthetic_product_01/authentic/batch_003/item_0037.png",
+   "synthetic_product_01/authentic/batch_003/item_0038.png",
+   "synthetic_product_01/authentic/batch_003/item_0039.png"
+  ],
+  "counterfeit": [
+   "synthetic_product_01/counterfeit/batch_001/item_0010.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0011.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0012.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0013.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0014.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0015.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0016.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0017.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0018.png",
+   "synthetic_product_01/counterfeit/batch_001/item_0019.png"
+  ],
+  "grade_a": [
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0000.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0001.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0002.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0003.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0004.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0005.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0006.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0007.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0008.png",
+   "synthetic_product_01/counterfeit_grade_a/batch_000/item_0009.png"
+  ]
+ },
+ "synthetic_product_02": {
+  "authentic": [
+   "synthetic_product_02/authentic/batch_008/item_0080.png",
+   "synthetic_product_02/authentic/batch_008/item_0081.png",
+   "synthetic_product_02/authentic/batch_008/item_0082.png",
+   "synthetic_product_02/authentic/batch_008/item_0083.png",
+   "synthetic_product_02/authentic/batch_008/item_0084.png",
+   "synthetic_product_02/authentic/batch_008/item_0085.png",
+   "synthetic_product_02/authentic/batch_008/item_0086.png",
+   "synthetic_product_02/authentic/batch_008/item_0087.png",
+   "synthetic_product_02/authentic/batch_008/item_0088.png",
+   "synthetic_product_02/authentic/batch_008/item_0089.png"
+  ],
+  "counterfeit": [
+   "synthetic_product_02/counterfeit/batch_002/item_0020.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0021.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0022.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0023.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0024.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0025.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0026.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0027.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0028.png",
+   "synthetic_product_02/counterfeit/batch_002/item_0029.png"
+  ],
+  "grade_a": [
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0000.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0001.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0002.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0003.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0004.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0005.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0006.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0007.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0008.png",
+   "synthetic_product_02/counterfeit_grade_a/batch_000/item_0009.png"
+  ]
+ }
+}

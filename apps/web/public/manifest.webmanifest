@@ -1,0 +1,20 @@
+{
+  "name": "Authentic Edge",
+  "short_name": "Authentic",
+  "description": "Check a product is genuine — on your phone, offline.",
+  "id": "/",
+  "start_url": "/scan",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#0b7d46",
+  "lang": "en",
+  "categories": ["health", "utilities"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [{ "name": "Scan a product", "url": "/scan", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }]
+}

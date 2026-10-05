@@ -1,0 +1,77 @@
+# Render Blueprint: Django API + Celery worker (one service), PostgreSQL and Redis.
+# The PWA is deployed separately on Vercel and proxies /api to this service (apps/web/vercel.json).
+# Walkthrough: docs/runbooks/deploy-render.md
+services:
+  - type: web
+    name: authentic-edge-api
+    runtime: docker
+    region: frankfurt # closest Render region to Nigeria; keep the same region for the database
+    plan: standard # 2 GB RAM: the worker loads TensorFlow (~700 MB). "starter" (512 MB) will be OOM-killed.
+    dockerfilePath: ./apps/api/Dockerfile.render
+    dockerContext: .
+    healthCheckPath: /api/v1/health/
+    preDeployCommand: python manage.py migrate --noinput && python manage.py bootstrap
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - apps/api/**
+        - ml/pyproject.toml
+        - ml/src/**
+        - ml/artifacts/**
+        - render.yaml
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: authentic-edge-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: authentic-edge-redis
+          property: connectionString
+      - key: WEB_CONCURRENCY
+        value: '2'
+      # --- set these in the Render dashboard when the Blueprint asks (sync: false) ---
+      - key: PUBLIC_WEB_ORIGIN # e.g. https://authentic-edge.vercel.app
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS # same value as PUBLIC_WEB_ORIGIN (comma-separate several)
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS # same value; only needed if the PWA calls the API cross-origin
+        sync: false
+      - key: DJANGO_ALLOWED_HOSTS # extra hosts, e.g. a custom API domain; the .onrender.com host is automatic
+        value: localhost
+      - key: BOOTSTRAP_ADMIN_EMAIL # first superuser (created once, never reset)
+        sync: false
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: BOOTSTRAP_OEM_COMPANY # first manufacturer account for the OEM portal (optional)
+        sync: false
+      - key: BOOTSTRAP_OEM_EMAIL
+        sync: false
+      - key: BOOTSTRAP_OEM_PASSWORD
+        sync: false
+      - key: BOOTSTRAP_NAFDAC_EMAIL # regulator account for the admin console (optional)
+        sync: false
+      - key: BOOTSTRAP_NAFDAC_PASSWORD
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: keyvalue
+    name: authentic-edge-redis
+    region: frankfurt
+    plan: free
+    maxmemoryPolicy: noeviction # a Celery broker must never evict queued jobs
+    ipAllowList: [] # internal access only
+
+databases:
+  - name: authentic-edge-db
+    region: frankfurt
+    plan: free # expires after 30 days on the free tier; use basic-256mb for anything lasting
+    databaseName: authentic_edge
+    user: authentic_edge
+    postgresMajorVersion: '15'

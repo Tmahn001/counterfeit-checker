@@ -1,0 +1,45 @@
+name: ml
+on:
+  push:
+    branches: [main]
+    paths: ['ml/**', '.github/workflows/ml.yml']
+  pull_request:
+    paths: ['ml/**', '.github/workflows/ml.yml']
+  workflow_dispatch:
+    inputs:
+      train:
+        description: 'Run a full training + evaluation + export (expensive)'
+        type: boolean
+        default: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: ml } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11', cache: pip }
+      - run: pip install -e ".[dev]"
+      - run: ruff check . && black --check src tests
+      - run: mypy
+      - run: pytest -q
+
+  train:
+    if: github.event_name == 'workflow_dispatch' && inputs.train
+    needs: test
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: ml } }
+    steps:
+      - uses: actions/checkout@v4
+        with: { lfs: true }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11', cache: pip }
+      - run: pip install -e ".[dev]"
+      - run: python -m authentic_edge_ml.cli train --config src/authentic_edge_ml/training/config.yaml
+      - name: Evaluation gate (Recall ≥ 0.95, Precision ≥ 0.85 under adversarial conditions)
+        run: python -m authentic_edge_ml.cli evaluate --manifest data/manifests/v1.json --out reports/evaluation-report.md --strict
+      - name: Convert to TF.js (float16, ≤4 MB shards) — only after the gate passes
+        run: python -m authentic_edge_ml.cli export --version ${{ github.run_number }} --out ../apps/web/public/models
+      - uses: actions/upload-artifact@v4
+        with: { name: model-candidate, path: apps/web/public/models }

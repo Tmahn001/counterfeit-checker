@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "authentic-edge-ml"
+version = "0.1.0"
+description = "Siamese CNN + ORB training/conversion/evaluation pipeline for authentic-edge"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+authors = [{ name = "Tolulope Iwalewa" }]
+dependencies = [
+  "tensorflow==2.15.1",
+  "numpy<2",
+  "opencv-python-headless>=4.9,<4.11",
+  "Pillow>=10",
+  "pyyaml>=6",
+  "mlflow-skinny>=2.14,<3",
+  "scikit-learn>=1.4,<1.6",
+  "matplotlib>=3.8,<3.10",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=5",
+  "ruff==0.6.9",
+  "black==24.8.0",
+  "mypy==1.11.2",
+  "types-PyYAML",
+]
+
+[project.scripts]
+authentic-edge-ml = "authentic_edge_ml.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"authentic_edge_ml.training" = ["config.yaml"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "D"]
+ignore = ["D100", "D104", "D107", "D203", "D213"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+"src/authentic_edge_ml/cli.py" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_calls = false
+disallow_any_generics = false
+warn_return_any = false
+files = ["src/authentic_edge_ml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+filterwarnings = ["ignore::DeprecationWarning"]

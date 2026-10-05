@@ -1,0 +1,62 @@
+name: web
+on:
+  push:
+    branches: [main]
+    paths: ['apps/web/**', 'packages/**', 'pnpm-lock.yaml', '.github/workflows/web.yml']
+  pull_request:
+    paths: ['apps/web/**', 'packages/**', 'pnpm-lock.yaml', '.github/workflows/web.yml']
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9.15.9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @authentic-edge/web lint
+      - run: pnpm --filter @authentic-edge/web typecheck
+      - run: pnpm --filter @authentic-edge/web exec vitest run --coverage
+      - run: pnpm audit --audit-level=high || true
+      - name: Build static export + service worker (enforces the 15 MB cache budget)
+        run: pnpm --filter @authentic-edge/web build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: /api
+      - name: Bundle size report
+        run: du -sh apps/web/out && cat apps/web/out/precache-report.json
+      - uses: actions/upload-artifact@v4
+        with: { name: web-out, path: apps/web/out, retention-days: 7 }
+
+  lighthouse:
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: web-out, path: out }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Lighthouse CI (PWA = 100 enforced; Performance ≥ 90 warns until the minimal OpenCV.js build lands, ADR-0005)
+        run: |
+          npx -y serve out -l 3000 &
+          sleep 3
+          npx -y @lhci/cli@0.14.x autorun --collect.url=http://localhost:3000/ --collect.url=http://localhost:3000/scan \
+            --collect.settings.preset=desktop --collect.numberOfRuns=1 \
+            --assert.assertions.categories:pwa=error:1 --assert.assertions.categories:accessibility=error:1 --assert.assertions.categories:performance=warn:0.9 \
+            --upload.target=temporary-public-storage
+
+  e2e:
+    needs: quality
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9.15.9 }
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@v4
+        with: { name: web-out, path: apps/web/out }
+      - run: pnpm --filter @authentic-edge/web exec playwright test
+        env: { HOME: /root }

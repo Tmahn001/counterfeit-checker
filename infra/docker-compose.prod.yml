@@ -1,0 +1,98 @@
+# Production-shaped stack: static export of the PWA served by nginx, gunicorn for Django, Celery worker.
+# Usage: docker compose -f infra/docker-compose.prod.yml --env-file .env up -d --build
+name: authentic-edge-prod
+
+x-api-env: &api-env
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set in .env}
+  DJANGO_DEBUG: 'False'
+  DJANGO_SETTINGS_MODULE: config.settings.prod
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?set in .env}
+  DATABASE_URL: ${DATABASE_URL:?set in .env}
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?set in .env}
+  CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:?set in .env}
+  SENTRY_DSN: ${SENTRY_DSN:-}
+  PUBLIC_WEB_ORIGIN: ${PUBLIC_WEB_ORIGIN:?set in .env}
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+  api:
+    image: authentic-edge/api:prod
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+      target: prod
+    environment: *api-env
+    command: >
+      sh -c "python manage.py migrate --noinput
+      && python manage.py collectstatic --noinput
+      && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile - --error-logfile -"
+    volumes:
+      - api_media:/app/media
+      - api_static:/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    image: authentic-edge/worker:prod
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+      target: worker
+    environment:
+      <<: *api-env
+      TF_CPP_MIN_LOG_LEVEL: '2'
+    command: celery -A config worker --loglevel=INFO --concurrency=1
+    volumes:
+      - api_media:/app/media
+    depends_on:
+      - redis
+      - db
+    restart: unless-stopped
+
+  web:
+    image: authentic-edge/web:prod
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      target: prod
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-/api}
+        NEXT_PUBLIC_MODEL_MANIFEST_URL: ${NEXT_PUBLIC_MODEL_MANIFEST_URL:-/models/v1/model.json}
+        NEXT_PUBLIC_BASELINES_URL: ${NEXT_PUBLIC_BASELINES_URL:-/baselines/v1/baselines.json}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+    volumes:
+      - api_static:/usr/share/nginx/django-static:ro
+      - api_media:/usr/share/nginx/django-media:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  api_media:
+  api_static:
